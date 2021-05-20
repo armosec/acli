@@ -1,17 +1,21 @@
-package acli
+package main
 
-import "github.com/golang/glog"
+import (
+	"fmt"
+)
 
 func main() {
 	workloads, err := HandleInput()
 	if err != nil {
-		glog.Exitf(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
-	response, err := RegoHandler(workloads)
+	_, err = RegoHandler(workloads)
 	if err != nil {
-		glog.Exitf(err.Error())
+		fmt.Println(err.Error())
+		return
 	}
 
-	glog.Infof("%v", response)
+	// fmt.Printf("response: %v\n", response)
 }

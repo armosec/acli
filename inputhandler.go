@@ -1,4 +1,4 @@
-package acli
+package main
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ func HandleInput() (map[string]interface{}, error) {
 		return nil, err
 	}
 	if len(files) == 0 {
-		return nil, fmt.Errorf("You must provide a file name or directory")
+		return nil, fmt.Errorf("No files found. Please make sure you provided a full path")
 	}
 	workloads := make(map[string]interface{})
 	for i := range files {
@@ -32,25 +32,21 @@ func HandleInput() (map[string]interface{}, error) {
 }
 
 func flagParser() ([]string, error) {
-	filePath := ""
 	dirPath := ""
 
-	flag.StringVar(&filePath, "inputFile", "", "File input")
-	flag.StringVar(&dirPath, "inputDir", "", "Directory containing yaml/json files")
+	// flag.Set("alsologtostderr", "1")
+	flag.StringVar(&dirPath, "input", "", "Full path to a directory or file")
 	flag.Parse()
 
-	files := []string{}
-	if dirPath != "" {
-		f, err := GetFilesFromDir(dirPath)
-		if err != nil {
-			return files, err
-		}
-		files = append(files, f...)
+	if dirPath == "" {
+		return nil, fmt.Errorf("Please provide full path to a file/directory")
 	}
-	if filePath != "" {
-		files = append(files, filePath)
 
+	files, err := GetFilesFromDir(dirPath)
+	if err != nil {
+		return files, err
 	}
+
 	return files, nil
 }
 func GetFilesFromDir(fileDir string) ([]string, error) {
@@ -66,7 +62,7 @@ func GetFilesFromDir(fileDir string) ([]string, error) {
 	return files, err
 }
 
-func LoadFile(filePath string) (map[string]interface{}, error) {
+func LoadFile(filePath string) (interface{}, error) {
 	if strings.HasSuffix(filePath, ".yaml") {
 		return LoadYamlFile(filePath)
 	} else if strings.HasSuffix(filePath, ".json") {
@@ -76,21 +72,21 @@ func LoadFile(filePath string) (map[string]interface{}, error) {
 	}
 }
 
-func LoadYamlFile(filePath string) (map[string]interface{}, error) {
-	yamlObj := map[string]interface{}{}
+func LoadYamlFile(filePath string) (interface{}, error) {
+	var yamlObj interface{}
 	yamlFile, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return yamlObj, err
 	}
-	err = yaml.Unmarshal(yamlFile, &yamlObj)
-	if err != nil {
+
+	if err := yaml.Unmarshal(yamlFile, &yamlObj); err != nil {
 		return yamlObj, err
 	}
-	return yamlObj, nil
+	return convertYamlToJson(yamlObj), nil
 }
 
-func LoadJsonFile(filePath string) (map[string]interface{}, error) {
-	jsonObj := map[string]interface{}{}
+func LoadJsonFile(filePath string) (interface{}, error) {
+	var jsonObj interface{}
 	jsonFile, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return jsonObj, err
@@ -100,4 +96,20 @@ func LoadJsonFile(filePath string) (map[string]interface{}, error) {
 		return jsonObj, err
 	}
 	return jsonObj, nil
+}
+
+func convertYamlToJson(i interface{}) interface{} {
+	switch x := i.(type) {
+	case map[interface{}]interface{}:
+		m2 := map[string]interface{}{}
+		for k, v := range x {
+			m2[k.(string)] = convertYamlToJson(v)
+		}
+		return m2
+	case []interface{}:
+		for i, v := range x {
+			x[i] = convertYamlToJson(v)
+		}
+	}
+	return i
 }
