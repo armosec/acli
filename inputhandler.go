@@ -72,9 +72,10 @@ func LoadFile(filePath string) (map[string]interface{}, error) {
 	} else if strings.HasSuffix(filePath, ".json") {
 		return LoadJsonFile(filePath)
 	} else {
-		return nil, fmt.Errorf("Unknown file type")
+		return nil, fmt.Errorf("Unknown file format")
 	}
 }
+
 func LoadYamlFile(filePath string) (map[string]interface{}, error) {
 	yamlObj := map[string]interface{}{}
 	yamlFile, err := ioutil.ReadFile(filePath)
@@ -87,6 +88,7 @@ func LoadYamlFile(filePath string) (map[string]interface{}, error) {
 	}
 	return yamlObj, nil
 }
+
 func LoadJsonFile(filePath string) (map[string]interface{}, error) {
 	jsonObj := map[string]interface{}{}
 	jsonFile, err := ioutil.ReadFile(filePath)
@@ -98,12 +100,4 @@ func LoadJsonFile(filePath string) (map[string]interface{}, error) {
 		return jsonObj, err
 	}
 	return jsonObj, nil
-}
-
-func LoadRegoFile(filePath string) ([]byte, error) {
-	content, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return content, err
-	}
-	return content, nil
 }

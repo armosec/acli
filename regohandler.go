@@ -3,6 +3,7 @@ package acli
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/armosec/armopa/ast"
 	"github.com/armosec/armopa/rego"
@@ -19,6 +20,8 @@ var (
 var Rules = []string{"rule-privilege-escalation"}
 
 func RegoHandler(workloads map[string]interface{}) (map[string][]opapolicy.RuleResponse, error) {
+	loadDataFromEnv()
+
 	regoList, err := GetRego()
 	if err != nil {
 		return nil, err
@@ -88,4 +91,13 @@ func ignoreRule(ruleName string) bool {
 		}
 	}
 	return true
+}
+
+func loadDataFromEnv() {
+	if env := os.Getenv("CABackendURL"); env != "" {
+		BackendURL = env
+	}
+	if frameworksName := os.Getenv("CAFrameworkName"); frameworksName != "" {
+		FrameworkName = frameworksName
+	}
 }
