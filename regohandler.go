@@ -53,7 +53,7 @@ func RegoHandler(workloads map[string]interface{}) (map[string][]opapolicy.RuleR
 		if len(response) == 0 {
 			fmt.Printf("Passed\n")
 		} else {
-			// handele error
+			fmt.Printf("Failed\n")
 		}
 		fmt.Printf("\n")
 
@@ -74,6 +74,7 @@ func RunRego(rules []opapolicy.PolicyRule, inputObj interface{}) ([]opapolicy.Ru
 	if err != nil {
 		return nil, err
 	}
+
 	compiledRego := rego.New(
 		rego.Query("data.armo_builtins"),
 		rego.Compiler(compiled),

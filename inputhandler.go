@@ -63,13 +63,22 @@ func GetFilesFromDir(fileDir string) ([]string, error) {
 }
 
 func LoadFile(filePath string) (interface{}, error) {
+	var obj interface{}
+	var err error
 	if strings.HasSuffix(filePath, ".yaml") {
-		return LoadYamlFile(filePath)
+		obj, err = LoadYamlFile(filePath)
 	} else if strings.HasSuffix(filePath, ".json") {
-		return LoadJsonFile(filePath)
+		obj, err = LoadJsonFile(filePath)
 	} else {
 		return nil, fmt.Errorf("Unknown file format")
 	}
+	if err != nil {
+		return obj, err
+	}
+	if _, ok := obj.([]interface{}); ok {
+		return obj, nil
+	}
+	return []interface{}{obj}, nil
 }
 
 func LoadYamlFile(filePath string) (interface{}, error) {

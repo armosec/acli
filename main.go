@@ -11,11 +11,11 @@ func main() {
 		return
 	}
 
-	_, err = RegoHandler(workloads)
+	response, err := RegoHandler(workloads)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	// fmt.Printf("response: %v\n", response)
+	fmt.Printf("response: %v\n", response)
 }
