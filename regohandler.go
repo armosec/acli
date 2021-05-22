@@ -45,18 +45,10 @@ func RegoHandler(workloads map[string]interface{}) (map[string][]opapolicy.RuleR
 	}
 	ruleResponses := make(map[string][]opapolicy.RuleResponse)
 	for fileName, workload := range workloads {
-		fmt.Printf("Testing file: '%s'\n", fileName)
 		response, err := RunRego(regoList, workload)
 		if err != nil {
 			return ruleResponses, err
 		}
-		if len(response) == 0 {
-			fmt.Printf("Passed\n")
-		} else {
-			fmt.Printf("Failed\n")
-		}
-		fmt.Printf("\n")
-
 		ruleResponses[fileName] = response
 	}
 	return ruleResponses, nil
