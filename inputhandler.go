@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -82,16 +83,24 @@ func LoadFile(filePath string) (interface{}, error) {
 }
 
 func LoadYamlFile(filePath string) (interface{}, error) {
-	var yamlObj interface{}
 	yamlFile, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return yamlObj, err
+		return nil, err
 	}
 
-	if err := yaml.Unmarshal(yamlFile, &yamlObj); err != nil {
-		return yamlObj, err
+	r := bytes.NewReader(yamlFile)
+	dec := yaml.NewDecoder(r)
+	var t interface{}
+	yamlObjs := []interface{}{}
+	for dec.Decode(&t) == nil {
+		var yamlObj interface{}
+		if err := yaml.Unmarshal(yamlFile, &yamlObj); err != nil {
+			return yamlObj, err
+		}
+		yamlObjs = append(yamlObjs, t)
 	}
-	return convertYamlToJson(yamlObj), nil
+
+	return convertYamlToJson(yamlObjs), nil
 }
 
 func LoadJsonFile(filePath string) (interface{}, error) {
@@ -100,8 +109,7 @@ func LoadJsonFile(filePath string) (interface{}, error) {
 	if err != nil {
 		return jsonObj, err
 	}
-	err = json.Unmarshal(jsonFile, &jsonObj)
-	if err != nil {
+	if err = json.Unmarshal(jsonFile, &jsonObj); err != nil {
 		return jsonObj, err
 	}
 	return jsonObj, nil
