@@ -9,7 +9,6 @@ import (
 
 	icacli "github.com/armosec/capacketsgo/cacli"
 	"github.com/armosec/capacketsgo/opapolicy"
-	"github.com/armosec/capacketsgo/opapolicy/resources"
 )
 
 var (
@@ -55,7 +54,7 @@ func RegoHandler(workloads map[string]interface{}) (map[string][]opapolicy.RuleR
 }
 
 func RunRego(rules []opapolicy.PolicyRule, inputObj interface{}) ([]opapolicy.RuleResponse, error) {
-	modules := resources.LoadRegoFiles("vendor/github.com/armosec/capacketsgo/opapolicy/resources/rego/dependencies/")
+	modules := RegoDependencies() // resources.LoadRegoFiles("vendor/github.com/armosec/capacketsgo/opapolicy/resources/rego/dependencies/")
 	if len(modules) == 0 {
 		return nil, fmt.Errorf("Failed to load dependencies")
 	}
@@ -113,4 +112,45 @@ func ignoreRule(ruleName string) bool {
 		}
 	}
 	return true
+}
+
+func RegoDependencies() map[string]string {
+	d := make(map[string]string)
+	d["cautils"] = UtilsDependency()
+	return d
+}
+
+func UtilsDependency() string {
+	return `
+package cautils
+
+list_contains(lista,element) {
+  some i
+  lista[i] == element
+}
+
+
+# getPodName(metadata) = name {
+# 	name := metadata.generateName
+#}
+getPodName(metadata) = name {
+	name := metadata.name
+}
+
+
+#returns subobject ,sub1 is partial to parent,  e.g parent = {a:a,b:b,c:c,d:d}
+# sub1 = {b:b,c:c} - result is {b:b,c:c}, if sub1={b:b,e:f} returns {b:b}
+object_intersection(parent,sub1) = r{
+  
+  r := {k:p  | p := sub1[k]
+              parent[k]== p
+              }
+}
+
+#returns if parent contains sub(both are objects not sets!!)
+is_subobject(sub,parent) {
+object_intersection(sub,parent)  == sub
+}
+
+`
 }
