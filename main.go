@@ -9,6 +9,7 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/enescakir/emoji"
 	"github.com/fatih/color"
+	"github.com/mattn/go-isatty"
 )
 
 func main() {
@@ -24,7 +25,10 @@ func main() {
 	}
 
 	s := spinner.New(spinner.CharSets[4], 100*time.Millisecond) // Build our new spinner
-	s.Start()                                                   // Start the spinner
+
+	if isatty.IsTerminal(os.Stdout.Fd()) {
+		s.Start()
+	}
 
 	responseMap, err := RegoHandler(workloads)
 	if err != nil {
@@ -43,7 +47,9 @@ func main() {
 	failure_text := color.New(color.Faint, color.FgHiRed).FprintfFunc()
 	title1 := color.New(color.FgHiWhite).FprintfFunc()
 
-	s.Stop()
+	if isatty.IsTerminal(os.Stdout.Fd()) {
+		s.Stop()
+	}
 
 	for fileObject, fileResponse := range responseMap {
 		title1(os.Stdout, "%s: ", fileObject)

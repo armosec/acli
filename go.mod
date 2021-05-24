@@ -11,5 +11,6 @@ require (
 	github.com/enescakir/emoji v1.0.0
 	github.com/fatih/color v1.11.0
 	github.com/golang/glog v0.0.0-20210429001901-424d2337a529 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
