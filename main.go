@@ -52,12 +52,14 @@ func main() {
 	}
 
 	for fileObject, fileResponse := range responseMap {
-		title1(os.Stdout, "%s: ", fileObject)
+		title1(os.Stdout, "%s: \n", fileObject)
 		if len(fileResponse) == 0 {
 			success(os.Stdout, "passed %v\n", happyEmojies[rand.Intn(len(happyEmojies))])
 		} else {
-			failure(os.Stdout, "failed %v", sadEmojies[rand.Intn(len(sadEmojies))])
-			failure_text(os.Stdout, " - %s\n", fileResponse[0].AlertMessage)
+			for i := range fileResponse {
+				failure(os.Stdout, "failed %v", sadEmojies[rand.Intn(len(sadEmojies))])
+				failure_text(os.Stdout, " - %s\n", fileResponse[i].AlertMessage)
+			}
 		}
 	}
 }
