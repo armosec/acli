@@ -16,22 +16,33 @@ var (
 )
 
 var Rules = []string{
-	// "rule-identify-blacklisted-image-registries",
-	// "rule-list-all-cluster-admins",
-	"alert-rw-hostpath",
-	// "exec-into-container",
-	// "rule-access-dashboard",
-	// "instance-metadata-api-access",
-	// "internal-networking",
-	"rule-privilege-escalation",
-	// "rule-exposed-dashboard",
-	// "rule-deny-access-to-secrets",
-	// "rule-deny-cronjobs",
-	"alert-any-hostpath",
-	// "rule-pod-external-facing",
-	// "deny-vuln-image-pods",
-	// "access-container-service-account",
-	// "rule-can-ssh-to-pod",
+	"rule-identify-blacklisted-image-registries", // works on single yaml
+	"rule-credentials-in-env-var",                // works on single yaml
+	"rule-credentials-configmap",                 // works on single yaml
+	"alert-rw-hostpath",                          // works on single yaml
+	"rule-privilege-escalation",                  // works on single yaml
+	"alert-any-hostpath",                         // works on single yaml
+	"rule-name-similarity",                       // works on single yaml
+	// "exec-into-container",                     	// cautils dependency
+	// "rule-list-all-cluster-admins", 				// cautils dependency
+	// "rule-can-list-get-secrets", 				// cautils dependency
+	// "rule-can-impersonate-users-groups", 		// cautils dependency
+	// "rule-can-create-pod-kube-system", 			// cautils dependency
+	// "rule-can-create-modify-pod", 				// cautils dependency
+	// "deny-vuln-image-pods", 						// cautils dependency
+	// "deny-RCE-vuln-image-pods", 					// cautils dependency
+	// "rule-can-create-bind-role", 				// cautils dependency
+	// "rule-can-delete-create-service", 			// cautils dependency
+	// "rule-can-ssh-to-pod",            			// not relevant
+	// "internal-networking", 						// not relevant
+	// "rule-exposed-dashboard", 					// not relevant
+	// "rule-access-dashboard", 					// not relevant
+	// "instance-metadata-api-access", 				// not relevant
+	// "container-image-repository", 				// not relevant
+	// "image-pull-secrets",         				// not relevant
+	// "rule-access-kubelet-API", 					// not relevant
+	// "rule-deny-cronjobs", 						// not relevant
+	// "access-container-service-account", 			// not relevant
 }
 
 // var Rules = []string{"rule-privilege-escalation"}
